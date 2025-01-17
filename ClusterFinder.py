@@ -105,5 +105,3 @@ for cluster in clusters:
     for dot in cluster.dotsIn:
         print(dot.x, dot.y)
     print("\n")
-
-# НЫНЕШНЯЯ ПРОБЛЕМА - КЛАСТЕРЫ СОЕДИНЯЮТСЯ НЕ ИЗХОДЯ ИЗ НАИМЕНЬШЕЙ ДАЛЬНОСТИ
