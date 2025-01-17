@@ -1,3 +1,5 @@
+from Tools.scripts.generate_global_objects import Printer
+
 from vector import *
 class Cluster:
     def __init__(self, a, b):
@@ -47,7 +49,8 @@ initialDots = [
     Vector2(-11.5, -9),
     Vector2(-9, -9)
 ]
-numberOfClusters = 3
+numberOfClusters = 4
+clusterMergingBias = -1
 
 clusters = []
 dots = initialDots.copy()
@@ -62,7 +65,7 @@ while len(dots) > 1:
         dots.remove(dot)
 
     else:
-        print( f"created cluster (dots: {dots[closestDot[0]].x, dots[closestDot[0]].y} and {dot.x, dot.y}), {len(dots) - 2} dots left")
+        print( f"Сreated cluster (dots: {dots[closestDot[0]].x, dots[closestDot[0]].y} and {dot.x, dot.y}), {len(dots) - 2} dots left")
         clusters.append(Cluster(dots[closestDot[0]], dot))
         dots.pop(closestDot[0])
         dots.remove(dot)
@@ -72,10 +75,10 @@ if len(dots) == 1 and len(clusters) > 0:
     print(f"Added to cluster (dot: {dots[0].x, dots[0].y})")
     dots.clear()
 
-print("\n\n")
+print("\n")
 
 
-while len(clusters) > numberOfClusters:
+while (len(clusters) > numberOfClusters or clusterMergingBias != -1) and len(clusters) > 1:
 
     idA = -1
     idB = -1
@@ -93,6 +96,10 @@ while len(clusters) > numberOfClusters:
                 if minimal < minimalCl:
                     idA = a
                     idB = b
+                    minimalCl = minimal
+
+    if clusterMergingBias != -1 and minimalCl > clusterMergingBias:
+        break
 
     if idA != -1:
         dotsA = clusters[idA].dotsIn.copy()
@@ -101,7 +108,8 @@ while len(clusters) > numberOfClusters:
         clusters.pop(idA)
 
 
-for cluster in clusters:
-    for dot in cluster.dotsIn:
-        print(dot.x, dot.y)
-    print("\n")
+for i in range(len(clusters)):
+    print(f"\nCluster number {i + 1}:")
+
+    for dot in clusters[i].dotsIn:
+        print("\t", dot.x, dot.y)
