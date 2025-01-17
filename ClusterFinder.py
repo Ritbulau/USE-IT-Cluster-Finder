@@ -1,5 +1,3 @@
-from Tools.scripts.generate_global_objects import Printer
-
 from vector import *
 class Cluster:
     def __init__(self, a, b):
@@ -49,8 +47,13 @@ initialDots = [
     Vector2(-11.5, -9),
     Vector2(-9, -9)
 ]
-numberOfClusters = 4
-clusterMergingBias = -1
+
+clusterMergingBias = int(input("\nEnter cluster merging distance bias (type '-1' for entering fixed number of clusters): "))
+if clusterMergingBias < 0:
+    numberOfClusters = int(input("Enter number of clusters: "))
+else:
+    numberOfClusters = 1
+
 
 clusters = []
 dots = initialDots.copy()
@@ -60,25 +63,22 @@ while len(dots) > 1:
     closestDot = findClosestDot(dot, dots)
     cluster = findClosestCluster(dot, clusters)
     if cluster[1] < closestDot[1]:
-        print(f"Added to cluster (dot: {dot.x, dot.y}), {len(dots) - 1} dots left")
         clusters[cluster[0]].dotsIn.append(dot)
         dots.remove(dot)
 
     else:
-        print( f"Сreated cluster (dots: {dots[closestDot[0]].x, dots[closestDot[0]].y} and {dot.x, dot.y}), {len(dots) - 2} dots left")
         clusters.append(Cluster(dots[closestDot[0]], dot))
         dots.pop(closestDot[0])
         dots.remove(dot)
 
 if len(dots) == 1 and len(clusters) > 0:
     clusters[findClosestCluster(dots[0], clusters)[0]].dotsIn.append(dots[0])
-    print(f"Added to cluster (dot: {dots[0].x, dots[0].y})")
     dots.clear()
 
 print("\n")
 
 
-while (len(clusters) > numberOfClusters or clusterMergingBias != -1) and len(clusters) > 1:
+while (len(clusters) > numberOfClusters or clusterMergingBias >= 0) and len(clusters) > 1:
 
     idA = -1
     idB = -1
@@ -98,7 +98,7 @@ while (len(clusters) > numberOfClusters or clusterMergingBias != -1) and len(clu
                     idB = b
                     minimalCl = minimal
 
-    if clusterMergingBias != -1 and minimalCl > clusterMergingBias:
+    if clusterMergingBias >= 0 and minimalCl > clusterMergingBias:
         break
 
     if idA != -1:
