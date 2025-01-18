@@ -44,8 +44,7 @@ initialDots = [
     [-9, -9]
 ]
 
-clusterMergingBias = int(
-    input("\nEnter cluster merging distance bias (type '-1' for entering fixed number of clusters): "))
+clusterMergingBias = float(input("\nEnter cluster merging distance bias (type '-1' to set fixed number of clusters): "))
 if clusterMergingBias < 0:
     numberOfClusters = int(input("Enter number of clusters: "))
 else:
@@ -70,22 +69,21 @@ if len(dots) == 1 and len(clusters) > 0:
     clusters[find_closest_cluster(dots[0], clusters)[0]].append(dots[0])
     dots.clear()
 
-minimalCl = float('inf')
-while (len(clusters) > numberOfClusters or (0 <= clusterMergingBias < minimalCl)) and len(clusters) > 1:
+while (len(clusters) > numberOfClusters or clusterMergingBias >= 0 ) and len(clusters) > 1:
+    minimalCl = float('inf')
     idA = -1
     idB = -1
     for a in range(len(clusters)):
         for b in range(len(clusters)):
             if a != b:
-                minimal = float('inf')
                 for dot in clusters[a]:
                     closestDot = find_closest_dot(dot, clusters[b])
-                    if closestDot[1] < minimal:
-                        minimal = closestDot[1]
-                if minimal < minimalCl:
-                    idA = a
-                    idB = b
-                    minimalCl = minimal
+                    if closestDot[1] < minimalCl:
+                        minimalCl = closestDot[1]
+                        idA = a
+                        idB = b
+    if minimalCl > clusterMergingBias >= 0:
+        break
     if idA != -1:
         dotsA = clusters[idA].copy()
         for dot in dotsA:
